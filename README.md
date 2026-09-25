@@ -29,7 +29,23 @@ already-patched APK as input.
 ## Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.0.1](https://github.com/picarica/My-moprhe-patches/releases/tag/v1.0.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;1 patches total
+> **[v1.1.0](https://github.com/picarica/My-moprhe-patches/releases/tag/v1.1.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;2 patches total
+<details open>
+<summary>📦 Stick War: Legacy&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**🎯 Supported versions:**
+
+| 2026.1.983 |
+| :---: |
+| Google Play release 2026001983; requires its ARM64 and Unity asset-pack splits. |
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Remove Google Play requirement](#remove-google-play-requirement) | Removes Stick War: Legacy's mandatory Google Play PairIP launch checks while preserving the PairIP runtime, Unity asset packs, Play Games, billing, ads, and Firebase integrations. |  |
+
+</details>
+
 <details open>
 <summary>📦 AFFiNE&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
