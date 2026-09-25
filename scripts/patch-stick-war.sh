@@ -7,14 +7,14 @@ VERSION=$(sed -n 's/^version = //p' "$ROOT/gradle.properties")
 
 INPUT=${1:-"$PROJECT_ROOT/Stick+War_+Legacy_2026.1.983_APKPure.xapk"}
 OUTPUT=${2:-"$PROJECT_ROOT/Stick+War_+Legacy_2026.1.983_no-play.apk"}
-MORPHE_JAR="$PROJECT_ROOT/tools/morphe-desktop-1.15.0-all.jar"
-MORPHE_URL="https://github.com/MorpheApp/morphe-desktop/releases/download/v1.15.0/morphe-desktop-1.15.0-all.jar"
+MORPHE_JAR="$PROJECT_ROOT/tools/morphe-desktop-1.17.0-all.jar"
+MORPHE_URL="https://github.com/MorpheApp/morphe-desktop/releases/download/v1.17.0/morphe-desktop-1.17.0-all.jar"
 MPP="$ROOT/patches/build/libs/patches-$VERSION.mpp"
 KEYSTORE="$PROJECT_ROOT/stick-war-no-play.keystore"
 REPORT="$PROJECT_ROOT/Stick+War_+Legacy_2026.1.983_no-play-result.json"
 
 EXPECTED_INPUT_SHA256="dc51f432633fb727715d318ae544fa1319e53f6676893c198c46e41ad574c561"
-EXPECTED_MORPHE_SHA256="727e3744aa5c0006474590de6f4041bd55edc59f3d6cb9b596e95f7116384506"
+EXPECTED_MORPHE_SHA256="8cf6a9eab4ee9dab146bddc24681897851564f53116baec11f36ba2fa2f589be"
 
 for command in awk chmod mkdir sha256sum; do
     command -v "$command" >/dev/null || {

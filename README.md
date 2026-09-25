@@ -26,6 +26,28 @@ https://github.com/picarica/My-moprhe-patches
 Select the original supported XAPK and enable the matching patch. Do not use an
 already-patched APK as input.
 
+## Patches list
+
+<!-- PATCHES_START EXPANDED -->
+> **[v1.0.1](https://github.com/picarica/My-moprhe-patches/releases/tag/v1.0.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;1 patches total
+<details open>
+<summary>📦 AFFiNE&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**🎯 Supported versions:**
+
+| 0.27.4 |
+| :---: |
+| Google Play release 439; requires its arm64-v8a split. |
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Remove Google requirements](#remove-google-requirements) | Removes Google Play PairIP licensing, Firebase/Google startup components, analytics permissions, and AFFiNE's explicit Crashlytics startup call. |  |
+
+</details>
+
+<!-- PATCHES_END -->
+
 ## Original APK sources
 
 - **Stick War: Legacy:** [APKPure download page](https://apkpure.com/stick-war-legacy/com.maxgames.stickwarlegacy/download)
@@ -112,14 +134,30 @@ The bootstrap script checks out these public sources at exact commits:
 
 - Morphe patches Gradle plugin `v1.3.4`:
   `a230c33f7eca1e18b07bf1114ca850421520f98d`
-- Morphe patcher `v1.12.0`:
-  `ac0d688eaacb7ece80b65ebf719b252f69455783`
+- Morphe patcher `v1.14.1`:
+  `6f189f9ffb448ae32ceaf6c136c9d84d9a7ed274`
 
 Output:
 
 ```text
-patches/build/libs/patches-1.1.0.mpp
+patches/build/libs/patches-*.mpp
 ```
+
+## Development and releases
+
+This repository follows the official
+[Morphe patches template](https://github.com/MorpheApp/morphe-patches-template):
+
+- Keep all development and releases on the `main` branch and use semantic commit
+  messages.
+- `feat:` creates a minor release, `fix:` creates a patch release, and `chore:`
+  does not create a user-facing release.
+- Every push to `main` runs semantic-release. Commits without a release-triggering
+  semantic type are still compiled but do not publish a new version.
+- The release workflow generates `CHANGELOG.md`, `patches-bundle.json`,
+  `patches-list.json`, the README patch table, the release tag, and the MPP asset.
+- Do not manually bump versions or create release tags/assets. A release is usable
+  by Morphe Manager only after its matching `patches-<version>.mpp` asset exists.
 
 ## Patch the supplied XAPKs
 
@@ -135,7 +173,7 @@ Stick War: Legacy:
 ./scripts/patch-stick-war.sh
 ```
 
-The scripts download and verify Morphe Desktop `1.15.0` if needed, build the patch
+The scripts download and verify Morphe Desktop `1.17.0` if needed, build the patch
 bundle, apply only the app's matching patch, sign the standalone result with a
 dedicated local key, and run static verification.
 
