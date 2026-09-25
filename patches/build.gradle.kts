@@ -1,9 +1,9 @@
-group = "dev.bucek.affine"
+group = "dev.bucek.android"
 
 patches {
     about {
-        name = "AFFiNE No-GMS Patches"
-        description = "Removes Play licensing and automatic Google/Firebase startup from AFFiNE"
+        name = "Android No-GMS / No-Play Patches"
+        description = "App-specific patches for running AFFiNE and Stick War: Legacy without mandatory Google services"
         source = "https://github.com/picarica/My-moprhe-patches"
         author = "picarica"
         contact = "https://github.com/picarica/My-moprhe-patches/issues"

@@ -38,15 +38,31 @@ assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", created_at), (
     "created_at must use YYYY-MM-DDTHH:MM:SS"
 )
 
-assert len(patch_list["patches"]) == 1, "expected exactly one published patch"
-patch = patch_list["patches"][0]
-assert patch["name"] == "Remove Google requirements"
-compatibility = patch["compatiblePackages"][0]
-assert compatibility["packageName"] == "app.affine.pro"
-assert compatibility["apkFileType"] == "XAPK_REQUIRED"
-assert len(compatibility["signatures"]) == 2
-target = compatibility["targets"][0]
-assert target["version"] == "0.27.4"
-assert target["versionCodes"]["ARM64_V8A"] == 439
+assert len(patch_list["patches"]) == 2, "expected exactly two published patches"
+patches = {patch["name"]: patch for patch in patch_list["patches"]}
+assert set(patches) == {
+    "Remove Google Play requirement",
+    "Remove Google requirements",
+}
+
+affine = patches["Remove Google requirements"]
+affine_compatibility = affine["compatiblePackages"][0]
+assert affine_compatibility["packageName"] == "app.affine.pro"
+assert affine_compatibility["apkFileType"] == "XAPK_REQUIRED"
+assert len(affine_compatibility["signatures"]) == 2
+affine_target = affine_compatibility["targets"][0]
+assert affine_target["version"] == "0.27.4"
+assert affine_target["versionCodes"]["ARM64_V8A"] == 439
+
+stick_war = patches["Remove Google Play requirement"]
+stick_war_compatibility = stick_war["compatiblePackages"][0]
+assert stick_war_compatibility["packageName"] == "com.maxgames.stickwarlegacy"
+assert stick_war_compatibility["apkFileType"] == "XAPK_REQUIRED"
+assert stick_war_compatibility["signatures"] == [
+    "59bc9becd6fa02f2ff43c6d31aacc93246d8b63e7973494198f15f99e3988666"
+]
+stick_war_target = stick_war_compatibility["targets"][0]
+assert stick_war_target["version"] == "2026.1.983"
+assert stick_war_target["versionCodes"]["ARM64_V8A"] == 2026001983
 
 print(f"Release metadata is consistent for v{version}.")

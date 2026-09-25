@@ -1,8 +1,15 @@
-# AFFiNE no-GMS patch
+# Android no-GMS / no-Play patches
 
-This project contains a narrowly versioned Morphe patch for the Android build of
-[AFFiNE](https://github.com/toeverything/AFFiNE). It removes Google Play's PairIP
-license gate and prevents AFFiNE's Firebase/GMS telemetry paths from initializing.
+This project contains narrowly versioned Morphe patches for Android apps that
+otherwise require Google services to launch:
+
+- **AFFiNE 0.27.4 — `Remove Google requirements`:** removes Google Play's PairIP
+  license gate and prevents AFFiNE's Firebase/GMS telemetry paths from initializing.
+- **Stick War: Legacy 2026.1.983 — `Remove Google Play requirement`:** removes the
+  mandatory PairIP signature and Play-license launch checks while preserving the
+  instrumented runtime and optional Google-backed features.
+
+These are app- and version-specific patches, not a universal GMS compatibility layer.
 
 ## Add to Morphe Manager
 
@@ -16,15 +23,33 @@ Or add this repository manually in Morphe Manager's patch sources:
 https://github.com/picarica/My-moprhe-patches
 ```
 
-Then select the original AFFiNE `0.27.4` XAPK and enable
-`Remove Google requirements`. Do not use a patched APK as the input.
+Select the original supported XAPK and enable the matching patch. Do not use an
+already-patched APK as input.
 
-Morphe knows that this patch requires an ARM64 XAPK with version code `439`, but
-its download service currently has no direct AFFiNE mirror mapping. The download
-button may therefore open a web search limited to APKMirror, Uptodown, APKPure,
-and APKCombo. Select the original XAPK manually if necessary.
+## Original APK sources
 
-## Supported input
+- **Stick War: Legacy:** [APKPure download page](https://apkpure.com/stick-war-legacy/com.maxgames.stickwarlegacy/download)
+- **AFFiNE:** [APKPure app page](https://apkpure.com/affine/app.affine.pro)
+
+The links identify the source pages; always verify that the downloaded version and
+architecture match the supported input below. APKPure may label the action as
+"Download APK" even when the downloaded file is an XAPK bundle.
+
+## Supported inputs
+
+### Stick War: Legacy
+
+- Package: `com.maxgames.stickwarlegacy`
+- Version: `2026.1.983`
+- Version code: `2026001983`
+- Architecture: `arm64-v8a`
+- File type: XAPK containing the base, ARM64, and five Unity asset-pack splits
+- Google Play signing-certificate SHA-256:
+  `59bc9becd6fa02f2ff43c6d31aacc93246d8b63e7973494198f15f99e3988666`
+- Expected input SHA-256:
+  `dc51f432633fb727715d318ae544fa1319e53f6676893c198c46e41ad574c561`
+
+### AFFiNE
 
 - Package: `app.affine.pro`
 - Version: `0.27.4`
@@ -34,10 +59,27 @@ and APKCombo. Select the original XAPK manually if necessary.
 - Expected input SHA-256:
   `daa36b4523e800990249ac8a996e388a09024147be54564b0df5504029525f0a`
 
-The patch intentionally fails closed on a changed manifest or unmatched bytecode.
-Do not force it onto a different AFFiNE release.
+Both patches intentionally fail closed on a changed manifest, version code, or
+unmatched bytecode. Do not force them onto different app releases.
 
-## What the patch changes
+## What the Stick War patch changes
+
+- Keeps `com.pairip.application.Application`, `VMRunner.setContext()`, PairIP's
+  instrumented Java call sites, and `libpairipcore.so` intact.
+- Neutralizes only the PairIP wrapper's signature check and mandatory Google Play
+  license check before normal Unity startup.
+- Removes only PairIP's now-unused `LicenseActivity` and
+  `com.android.vending.CHECK_LICENSE` manifest permission.
+- Preserves the Unity player and all supplied install-time asset packs.
+- Preserves Play Games, billing, ads, Firebase, Play Asset Delivery classes, and the
+  game's native libraries.
+
+Preserving an optional integration does not make it work without GMS. Play Games,
+in-app purchases, cloud-backed features, ads, and similar functionality may fail or
+remain unavailable on a no-GMS device. The patch is intended to remove the mandatory
+launch gate so the local game can start.
+
+## What the AFFiNE patch changes
 
 - Restores the real application class, `app.affine.pro.AFFiNEApp`, instead of the
   Play-injected `com.pairip.application.Application` wrapper.
@@ -76,78 +118,74 @@ The bootstrap script checks out these public sources at exact commits:
 Output:
 
 ```text
-patches/build/libs/patches-1.0.1.mpp
+patches/build/libs/patches-1.1.0.mpp
 ```
 
-## Patch the supplied XAPK
+## Patch the supplied XAPKs
+
+AFFiNE:
 
 ```bash
 ./scripts/patch-affine.sh
 ```
 
-This downloads and verifies Morphe Desktop `1.15.0` if it is not already present,
-builds the patch, applies only `Remove Google requirements`, signs the result with a
-dedicated local key, and runs static verification.
+Stick War: Legacy:
 
-Outputs:
-
-```text
-../AFFiNE_0.27.4_no-gms.apk
-../AFFiNE_0.27.4_no-gms-result.json
-../affine-no-gms.keystore
+```bash
+./scripts/patch-stick-war.sh
 ```
 
-Back up the keystore and keep it private. Every later patched update must use the
-same key to update the installed patched application.
+The scripts download and verify Morphe Desktop `1.15.0` if needed, build the patch
+bundle, apply only the app's matching patch, sign the standalone result with a
+dedicated local key, and run static verification.
+
+Default outputs are written beside this repository:
+
+```text
+AFFiNE_0.27.4_no-gms.apk
+AFFiNE_0.27.4_no-gms-result.json
+affine-no-gms.keystore
+Stick+War_+Legacy_2026.1.983_no-play.apk
+Stick+War_+Legacy_2026.1.983_no-play-result.json
+stick-war-no-play.keystore
+```
+
+Back up each keystore and keep it private. Every later patched update of the same app
+must use the same key to update the installed patched application.
 
 ## Installation warning
 
-The patched APK has the same package name as official AFFiNE but a different signing
+A patched APK keeps the official package name but has a different signing
 certificate. It cannot update an official Play-installed copy. Android will normally
 report `INSTALL_FAILED_UPDATE_INCOMPATIBLE` while the official app is installed.
 
-**Uninstalling AFFiNE can erase local-only data.** Sync or export your data first.
-Do not uninstall until you have confirmed that everything important is backed up.
-
-After backing up and removing a conflicting official installation, install with:
-
-```bash
-adb install ../AFFiNE_0.27.4_no-gms.apk
-```
-
-Future builds signed by the preserved `affine-no-gms.keystore` can use:
-
-```bash
-adb install -r ../AFFiNE_0.27.4_no-gms.apk
-```
+Uninstalling an app can erase its local data and game progress. Back up or sync
+important data before removing an official installation. Once any conflict is
+resolved, install the appropriate generated APK with `adb install`; future builds
+signed by the preserved app-specific keystore can use `adb install -r`.
 
 ## Validation and limitations
 
-The following were validated locally:
+The project validates that:
 
-- Four manifest transformer tests pass.
-- Morphe applies exactly one patch without failures.
-- The APK is readable by Apktool and the JDK ZIP parser.
-- APK Signature Scheme v2 and v3 verification passes.
-- The output remains version `0.27.4` / code `439`, ARM64.
-- The 49 MB native AFFiNE engine is byte-for-byte unchanged.
-- The manifest has no PairIP, Firebase, GMS, Play licensing, or data-transport entry
-  points.
-- Decompiled DEX checks confirm the targeted Firebase paths are unreachable while
-  local authentication cookie persistence remains present.
+- All manifest-transformer unit tests pass.
+- Morphe applies exactly the selected patch without failures.
+- Generated APKs are readable by Apktool and pass APK Signature Scheme verification.
+- Package names, versions, version codes, and ARM64 native libraries are preserved.
+- The targeted PairIP launch paths are unreachable after patching.
+- Unrelated startup components and app-specific assets remain present.
 
-No Android device was connected during development, so launch, login, cloud sync,
-and editing still require real-device testing. The patch deliberately disables
-Firebase Analytics, Crashlytics reporting, Crashlytics user IDs, and upload of old
-diagnostic log files. It is not a universal GMS patch and does not support future
-AFFiNE versions without review.
+Static validation cannot prove gameplay or every optional integration works on a
+specific ROM. Real-device launch testing is still required. In particular, Stick
+War's Play Games, purchases, ads, cloud features, or other network functionality may
+still require Google services or developer servers even though local launch succeeds.
 
 ## Credits and license
 
 The patch structure follows the official Morphe template and was informed by the
 application-specific fingerprinting style used by
 [De-Vanced](https://github.com/RookieEnough/De-Vanced). No Strava patch was copied;
-AFFiNE has different PairIP and Firebase startup paths.
+these applications have different startup paths.
 
-Patch source is licensed under GPL-3.0. AFFiNE and Morphe retain their respective
-licenses and trademarks.
+Patch source is licensed under GPL-3.0. AFFiNE, Stick War: Legacy, APKPure, Google
+Play, and Morphe retain their respective licenses and trademarks.
